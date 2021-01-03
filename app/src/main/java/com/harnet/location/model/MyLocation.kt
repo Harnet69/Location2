@@ -9,9 +9,13 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
+import dagger.Component
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MyLocation {
+@Singleton
+class MyLocation @Inject constructor() {
     internal lateinit var timer1: Timer
     internal var lm: LocationManager? = null
     internal lateinit var locationResult: LocationResult

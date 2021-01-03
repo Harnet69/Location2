@@ -3,15 +3,25 @@ package com.harnet.location.viewModel
 import android.app.Activity
 import android.app.Application
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
+import com.harnet.location.model.DaggerMyLocationComponent
 import com.harnet.location.model.MyLocation
+import javax.inject.Inject
 
-class MapsViewModel(application: Application): BaseViewModel(application) {
+class MapsViewModel (application: Application): BaseViewModel(application) {
+    @Inject
+    lateinit var myLocation: MyLocation
+
     val mUserCoords = MutableLiveData<LatLng>()
 
-    fun refresh(activity: Activity){
+    init {
+        DaggerMyLocationComponent.create().inject(this)
+    }
+
+    fun refreshUsersCoords(activity: Activity){
         getUserCoordinates(activity)
     }
 
@@ -24,9 +34,6 @@ class MapsViewModel(application: Application): BaseViewModel(application) {
             }
         }
 
-        // instantiate MyLocation class
-        //TODO Use Dagger to inject the class here
-        val myLocation = MyLocation()
         myLocation.getLocation(activity, locationResult)
     }
 }
