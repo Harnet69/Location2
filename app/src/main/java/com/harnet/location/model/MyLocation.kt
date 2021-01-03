@@ -9,7 +9,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
-import dagger.Component
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,17 +18,18 @@ class MyLocation @Inject constructor() {
     internal lateinit var timer1: Timer
     internal var lm: LocationManager? = null
     internal lateinit var locationResult: LocationResult
-    internal var gps_enabled = false
-    internal var network_enabled = false
+    internal var gpsEnabled = false
+    internal var networkEnabled = false
 
     internal var locationListenerGps: LocationListener = object : LocationListener {
-
 
         override fun onLocationChanged(location: Location) {
             timer1.cancel()
             locationResult.gotLocation(location)
-            lm!!.removeUpdates(this)
-            lm!!.removeUpdates(locationListenerNetwork)
+            lm?.let {
+                it.removeUpdates(this)
+                it.removeUpdates(locationListenerNetwork)
+            }
         }
 
         override fun onProviderDisabled(provider: String) {}
@@ -41,8 +41,10 @@ class MyLocation @Inject constructor() {
         override fun onLocationChanged(location: Location) {
             timer1.cancel()
             locationResult.gotLocation(location)
-            lm!!.removeUpdates(this)
-            lm!!.removeUpdates(locationListenerGps)
+            lm?.let {
+                it.removeUpdates(this)
+                it.removeUpdates(locationListenerGps)
+            }
         }
 
         override fun onProviderDisabled(provider: String) {}
@@ -58,32 +60,51 @@ class MyLocation @Inject constructor() {
 
         //exceptions will be thrown if provider is not permitted.
         try {
-            gps_enabled = lm!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            lm?.let { gpsEnabled = it.isProviderEnabled(LocationManager.GPS_PROVIDER) }
         } catch (ex: Exception) {
         }
 
         try {
-            network_enabled = lm!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            lm?.let { networkEnabled = lm!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER) }
         } catch (ex: Exception) {
         }
 
         //don't start listeners if no provider is enabled
-        if (!gps_enabled && !network_enabled)
+        if (!gpsEnabled && !networkEnabled)
             return false
 
-        if (ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) run {
-
-            ActivityCompat.requestPermissions(context as Activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 111)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) run {
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 111
+            )
         }
 
-
-        if (gps_enabled)
-            lm!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListenerGps)
-        if (network_enabled)
-            lm!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListenerNetwork)
+        if (gpsEnabled)
+            lm?.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0f,
+                locationListenerGps
+            )
+        if (networkEnabled)
+            lm?.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                0,
+                0f,
+                locationListenerNetwork
+            )
         timer1 = Timer()
         timer1.schedule(GetLastLocation(context), 20000)
         return true
@@ -91,42 +112,52 @@ class MyLocation @Inject constructor() {
 
     internal inner class GetLastLocation(var context: Context) : TimerTask() {
         override fun run() {
-            lm!!.removeUpdates(locationListenerGps)
-            lm!!.removeUpdates(locationListenerNetwork)
+            lm?.removeUpdates(locationListenerGps)
+            lm?.removeUpdates(locationListenerNetwork)
 
-            var net_loc: Location? = null
-            var gps_loc: Location? = null
+            var netLoc: Location? = null
+            var gpsLoc: Location? = null
 
-            if (ActivityCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
             ) run {
 
-                ActivityCompat.requestPermissions(context as Activity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),111)
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ), 111
+                )
             }
 
 
-            if (gps_enabled)
-                gps_loc = lm!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (network_enabled)
-                net_loc = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            if (gpsEnabled)
+                gpsLoc = lm?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (networkEnabled)
+                netLoc = lm?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
             //if there are both values use the latest one
-            if (gps_loc != null && net_loc != null) {
-                if (gps_loc.getTime() > net_loc.getTime())
-                    locationResult.gotLocation(gps_loc)
+            if (gpsLoc != null && netLoc != null) {
+                if (gpsLoc.getTime() > netLoc.getTime())
+                    locationResult.gotLocation(gpsLoc)
                 else
-                    locationResult.gotLocation(net_loc)
+                    locationResult.gotLocation(netLoc)
                 return
             }
 
-            if (gps_loc != null) {
-                locationResult.gotLocation(gps_loc)
+            if (gpsLoc != null) {
+                locationResult.gotLocation(gpsLoc)
                 return
             }
-            if (net_loc != null) {
-                locationResult.gotLocation(net_loc)
+            if (netLoc != null) {
+                locationResult.gotLocation(netLoc)
                 return
             }
             locationResult.gotLocation(null)
