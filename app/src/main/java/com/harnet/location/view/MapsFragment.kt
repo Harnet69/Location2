@@ -52,8 +52,8 @@ class MapsFragment : Fragment() {
 
         viewModel.mUserCoords.observe(viewLifecycleOwner, Observer { userCoords ->
             userCoords?.let {
-            googleMap.addMarker(MarkerOptions().position(userCoords).title("User"))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCoords, 12F))
+            googleMap.addMarker(MarkerOptions().position(it).title("User"))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15F))
             }
         })
     }

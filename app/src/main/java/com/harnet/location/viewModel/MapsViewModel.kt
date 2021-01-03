@@ -18,12 +18,10 @@ class MapsViewModel(application: Application): BaseViewModel(application) {
     private fun getUserCoordinates(activity: Activity){
         val locationResult = object : MyLocation.LocationResult() {
             override fun gotLocation(location: Location?) {
-                val lat = location!!.latitude
-                val lon = location.longitude
-                //change LiveData here
-                mUserCoords.value = LatLng(lat, lon)
+                location?.let {
+                    mUserCoords.value = LatLng(it.latitude, it.longitude)
+                }
             }
-
         }
 
         // instantiate MyLocation class
