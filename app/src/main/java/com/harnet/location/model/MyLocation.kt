@@ -8,6 +8,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import java.util.*
 import javax.inject.Inject
@@ -15,6 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MyLocation @Inject constructor() {
+    private val updTime= 10_000L
     internal lateinit var timer1: Timer
     internal var lm: LocationManager? = null
     internal lateinit var locationResult: LocationResult
@@ -27,8 +29,10 @@ class MyLocation @Inject constructor() {
             timer1.cancel()
             locationResult.gotLocation(location)
             lm?.let {
-                it.removeUpdates(this)
-                it.removeUpdates(locationListenerNetwork)
+                // implement it if you want to get user location only one time
+//                it.removeUpdates(this)
+//                it.removeUpdates(locationListenerNetwork)
+                Log.i("UpdateLoc", "onLocationChanged: $it")
             }
         }
 
@@ -94,19 +98,19 @@ class MyLocation @Inject constructor() {
         if (gpsEnabled)
             lm?.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                0,
+                updTime,
                 0f,
                 locationListenerGps
             )
         if (networkEnabled)
             lm?.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
-                0,
+                updTime,
                 0f,
                 locationListenerNetwork
             )
         timer1 = Timer()
-        timer1.schedule(GetLastLocation(context), 20000)
+        timer1.schedule(GetLastLocation(context), updTime)
         return true
     }
 

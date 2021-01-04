@@ -14,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.harnet.location.R
 import com.harnet.location.viewModel.MapsViewModel
@@ -25,6 +26,8 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         observeViewModel(googleMap)
     }
+
+    private var userMarker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,8 +57,12 @@ class MapsFragment : Fragment() {
 
         viewModel.mUserCoords.observe(viewLifecycleOwner, Observer { userCoords ->
             userCoords?.let {
-                googleMap.addMarker(MarkerOptions().position(it).title("User"))
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15F))
+                if(userMarker == null){
+                    userMarker = googleMap.addMarker(MarkerOptions().position(it).title("User"))
+                }else{
+                    userMarker?.position = userCoords
+                }
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 10F))
             }
         })
     }

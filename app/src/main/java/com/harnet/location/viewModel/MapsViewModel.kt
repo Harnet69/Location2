@@ -23,6 +23,7 @@ class MapsViewModel (application: Application): BaseViewModel(application) {
         getUserCoordinates(activity)
     }
 
+    // get user coordinated constantly
     private fun getUserCoordinates(activity: Activity){
         val locationResult = object : MyLocation.LocationResult() {
             override fun gotLocation(location: Location?) {
