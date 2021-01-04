@@ -5,7 +5,7 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.harnet.location.R
 
-class LocationService(activity: Activity, fragment: Fragment) :
+class LocationPermission(activity: Activity, fragment: Fragment) :
     PermissionService(activity, fragment){
     override val permissionCode: Int =
         activity.resources.getString(R.string.permissionNavigation).toInt()

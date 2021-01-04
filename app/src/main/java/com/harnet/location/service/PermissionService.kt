@@ -10,7 +10,7 @@ import com.harnet.location.view.MapsFragment
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-abstract class PermissionService(val activity: Activity, val fragment: Fragment) {
+abstract class PermissionService(private val activity: Activity, private val fragment: Fragment) {
     protected open val permissionCode: Int = 0
     protected open val permissionType = ""
     protected open val rationaleTitle = ""
@@ -79,7 +79,7 @@ abstract class PermissionService(val activity: Activity, val fragment: Fragment)
         fragment: Fragment,
         permissionGranted: Boolean
     ) {
-        // for precaution if user click to "Send SMS" and just after it a back button - can be a crash
+        // for precaution of a back button - can be a crash
         when (val activeFragment: Fragment? =
             fragment.childFragmentManager.primaryNavigationFragment) {
             is MapsFragment -> {
@@ -100,10 +100,10 @@ abstract class PermissionService(val activity: Activity, val fragment: Fragment)
             s = m.group(1)
         }
 
-        if (permissionGranted) {
-            toastMsg = "Permission $s was granted"
+        toastMsg = if (permissionGranted) {
+            "Permission $s was granted"
         } else {
-            toastMsg = "Permission $s wasn't granted"
+            "Permission $s wasn't granted"
         }
 
         Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show()

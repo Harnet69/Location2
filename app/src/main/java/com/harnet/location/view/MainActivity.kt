@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {    // permission service
         if (permissions.isNotEmpty()) {
             when (permissions[0]) {
                 android.Manifest.permission.ACCESS_FINE_LOCATION -> {
-                    appPermissions.locationService.onRequestPermissionsResult(
+                    appPermissions.locationPermission.onRequestPermissionsResult(
                         requestCode,
                         permissions,
                         grantResults

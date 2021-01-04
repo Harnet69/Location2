@@ -16,8 +16,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
 import com.harnet.location.R
-import com.harnet.location.model.AppPermissions
-import com.harnet.location.service.PermissionService
 import com.harnet.location.viewModel.MapsViewModel
 
 class MapsFragment : Fragment() {
@@ -45,10 +43,8 @@ class MapsFragment : Fragment() {
         if (this.context?.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             viewModel.refreshUsersCoords(activity as Activity)
         } else {
-            (activity as MainActivity).appPermissions.locationService.checkPermission()
+            (activity as MainActivity).appPermissions.locationPermission.checkPermission()
         }
-
-//        activity?.let { viewModel.refreshUsersCoords(it) }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
@@ -64,7 +60,7 @@ class MapsFragment : Fragment() {
         })
     }
 
-    // method is called when activity get a result of user  permission decision
+    // method is called when activity get a result of user permission decision
     fun onPermissionsResult(permissionGranted: Boolean) {
         if (permissionGranted) {
             viewModel.refreshUsersCoords(activity as Activity)
