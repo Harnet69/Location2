@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,27 +15,24 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.harnet.location.R
 import com.harnet.location.viewModel.MapsViewModel
 
 class MapsFragment : Fragment() {
-
     private lateinit var viewModel: MapsViewModel
 
     private val callback = OnMapReadyCallback { googleMap ->
         observeViewModel(googleMap)
     }
 
-    private var userMarker: Marker? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
@@ -56,10 +54,16 @@ class MapsFragment : Fragment() {
     private fun observeViewModel(googleMap: GoogleMap) {
 
         viewModel.mUserCoords.observe(viewLifecycleOwner, Observer { userCoords ->
-            userCoords?.let {
-                if(userMarker == null){
-                    userMarker = googleMap.addMarker(MarkerOptions().position(it).title("User"))
-                }else{
+//            Toast.makeText(context, userCoords.toString(), Toast.LENGTH_SHORT).show()
+            var userMarker: Marker? = null
+            val markerOptions = MarkerOptions()
+                .position(userCoords)
+                .title("User")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluedot))
+            userCoords.let {
+                if (userMarker == null) {
+                    userMarker = googleMap.addMarker(markerOptions)
+                } else {
                     userMarker?.position = userCoords
                 }
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 10F))
