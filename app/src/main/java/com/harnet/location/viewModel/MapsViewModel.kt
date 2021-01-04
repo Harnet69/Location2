@@ -3,8 +3,6 @@ package com.harnet.location.viewModel
 import android.app.Activity
 import android.app.Application
 import android.location.Location
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.harnet.location.model.DaggerMyLocationComponent
