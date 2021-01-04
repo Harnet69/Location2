@@ -46,8 +46,8 @@ class MyLocation @Inject constructor() {
             timer1.cancel()
             locationResult.gotLocation(location)
             lm?.let {
-                it.removeUpdates(this)
-                it.removeUpdates(locationListenerGps)
+//                it.removeUpdates(this)
+//                it.removeUpdates(locationListenerGps)
             }
         }
 
@@ -58,6 +58,7 @@ class MyLocation @Inject constructor() {
 
     fun getLocation(context: Context, result: LocationResult): Boolean {
         //I use LocationResult callback class to pass location value from MyLocation to user code.
+        Log.i("UpdateLoc", "At first getLocation: ")
         locationResult = result
         if (lm == null)
             lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
@@ -110,14 +111,14 @@ class MyLocation @Inject constructor() {
                 locationListenerNetwork
             )
         timer1 = Timer()
-        timer1.schedule(GetLastLocation(context), updTime)
+        timer1.schedule(GetLastLocation(context), 20000)
         return true
     }
 
     internal inner class GetLastLocation(var context: Context) : TimerTask() {
         override fun run() {
-            lm?.removeUpdates(locationListenerGps)
-            lm?.removeUpdates(locationListenerNetwork)
+//            lm?.removeUpdates(locationListenerGps)
+//            lm?.removeUpdates(locationListenerNetwork)
 
             var netLoc: Location? = null
             var gpsLoc: Location? = null
