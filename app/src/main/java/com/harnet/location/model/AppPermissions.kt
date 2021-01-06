@@ -3,7 +3,13 @@ package com.harnet.location.model
 import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.harnet.location.service.LocationPermission
+import com.harnet.location.service.PermissionService
 
-data class AppPermissions(val activity: Activity,val fragment: Fragment){
-    val locationPermission: LocationPermission = LocationPermission(activity, fragment)
+class AppPermissions{
+    fun getPermissionClass(permissionName: String, activity: Activity, fragment:Fragment): PermissionService? {
+        when(permissionName){
+            Permissions.LOCATION.permissionName -> return LocationPermission(activity, fragment)
+        }
+        return null
+    }
 }

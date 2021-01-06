@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.harnet.location.R
 import com.harnet.location.model.AppPermissions
+import com.harnet.location.model.Permissions
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {    // permission service
@@ -13,7 +14,7 @@ class MainActivity : AppCompatActivity() {    // permission service
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        appPermissions = AppPermissions(this, fragment)
+        appPermissions = AppPermissions()
     }
 
     // when user was asked for a permission
@@ -23,18 +24,19 @@ class MainActivity : AppCompatActivity() {    // permission service
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        //switcher of different kinds of permissions
         if (permissions.isNotEmpty()) {
+            //switcher of different kinds of permissions
             when (permissions[0]) {
                 android.Manifest.permission.ACCESS_FINE_LOCATION -> {
-                    when (val activeFragment: Fragment? =
-                        fragment.childFragmentManager.primaryNavigationFragment) {
+                    when (fragment.childFragmentManager.primaryNavigationFragment) {
+                        // request the appropriate fragment
                         is MapsFragment ->
-                            appPermissions.locationPermission.onRequestPermissionsResult(
-                                requestCode,
-                                permissions,
-                                grantResults
-                            )
+                            appPermissions.getPermissionClass(Permissions.LOCATION.permissionName, this, fragment)
+                                ?.onRequestPermissionsResult(
+                                    requestCode,
+                                    permissions,
+                                    grantResults
+                                )
                     }
                 }
             }

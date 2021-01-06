@@ -20,9 +20,12 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.harnet.location.R
 import com.harnet.location.viewModel.MapsViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MapsFragment : Fragment() {
     private lateinit var viewModel: MapsViewModel
+
+    private var userMarker: Marker? = null
 
     private val callback = OnMapReadyCallback { googleMap ->
         observeViewModel(googleMap)
@@ -44,7 +47,8 @@ class MapsFragment : Fragment() {
         if (this.context?.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             viewModel.refreshUsersCoords(activity as Activity)
         } else {
-            (activity as MainActivity).appPermissions.locationPermission.checkPermission()
+            (activity as MainActivity).appPermissions.getPermissionClass("location", activity as MainActivity, fragment)
+                ?.checkPermission()
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -55,7 +59,7 @@ class MapsFragment : Fragment() {
 
         viewModel.mUserCoords.observe(viewLifecycleOwner, Observer { userCoords ->
 //            Toast.makeText(context, userCoords.toString(), Toast.LENGTH_SHORT).show()
-            var userMarker: Marker? = null
+
             val markerOptions = MarkerOptions()
                 .position(userCoords)
                 .title("User")
