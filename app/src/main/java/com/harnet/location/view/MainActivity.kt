@@ -2,6 +2,7 @@ package com.harnet.location.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.harnet.location.R
 import com.harnet.location.model.AppPermissions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,11 +27,15 @@ class MainActivity : AppCompatActivity() {    // permission service
         if (permissions.isNotEmpty()) {
             when (permissions[0]) {
                 android.Manifest.permission.ACCESS_FINE_LOCATION -> {
-                    appPermissions.locationPermission.onRequestPermissionsResult(
-                        requestCode,
-                        permissions,
-                        grantResults
-                    )
+                    when (val activeFragment: Fragment? =
+                        fragment.childFragmentManager.primaryNavigationFragment) {
+                        is MapsFragment ->
+                            appPermissions.locationPermission.onRequestPermissionsResult(
+                                requestCode,
+                                permissions,
+                                grantResults
+                            )
+                    }
                 }
             }
         }
