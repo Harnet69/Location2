@@ -5,8 +5,8 @@ import android.app.Application
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
-import com.harnet.location.model.DaggerMyLocationComponent
 import com.harnet.location.model.MyLocation
+import com.harnet.location.model.di.DaggerMyLocationComponent
 import javax.inject.Inject
 
 class MapsViewModel (application: Application): BaseViewModel(application) {

@@ -1,6 +1,6 @@
-package com.harnet.location.model
+package com.harnet.location.model.di
 
-import com.harnet.location.view.MapsFragment
+import com.harnet.location.model.MyLocation
 import com.harnet.location.viewModel.MapsViewModel
 import dagger.Component
 import javax.inject.Singleton

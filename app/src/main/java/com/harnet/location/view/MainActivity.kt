@@ -5,15 +5,19 @@ import android.os.Bundle
 import com.harnet.location.R
 import com.harnet.location.model.AppPermissions
 import com.harnet.location.model.Permissions
+import com.harnet.location.model.di.DaggerAppPermissionsComponent
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {    // permission service
+    @Inject
     lateinit var appPermissions: AppPermissions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        appPermissions = AppPermissions()
+//        appPermissions = AppPermissions()
+        DaggerAppPermissionsComponent.create().inject(this)
     }
 
     // when user was asked for a permission
@@ -30,7 +34,11 @@ class MainActivity : AppCompatActivity() {    // permission service
                     when (fragment.childFragmentManager.primaryNavigationFragment) {
                         // request the appropriate fragment
                         is MapsFragment ->
-                            appPermissions.getPermissionClass(Permissions.LOCATION.permName, this, fragment)
+                            appPermissions.getPermissionClass(
+                                Permissions.LOCATION.permName,
+                                this,
+                                fragment
+                            )
                                 ?.onRequestPermissionsResult(
                                     requestCode,
                                     permissions,
