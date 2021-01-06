@@ -2,7 +2,6 @@ package com.harnet.location.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.harnet.location.R
 import com.harnet.location.model.AppPermissions
 import com.harnet.location.model.Permissions
@@ -31,7 +30,7 @@ class MainActivity : AppCompatActivity() {    // permission service
                     when (fragment.childFragmentManager.primaryNavigationFragment) {
                         // request the appropriate fragment
                         is MapsFragment ->
-                            appPermissions.getPermissionClass(Permissions.LOCATION.permissionName, this, fragment)
+                            appPermissions.getPermissionClass(Permissions.LOCATION.permName, this, fragment)
                                 ?.onRequestPermissionsResult(
                                     requestCode,
                                     permissions,

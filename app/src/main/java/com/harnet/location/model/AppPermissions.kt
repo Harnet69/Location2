@@ -8,7 +8,7 @@ import com.harnet.location.service.PermissionService
 class AppPermissions{
     fun getPermissionClass(permissionName: String, activity: Activity, fragment:Fragment): PermissionService? {
         when(permissionName){
-            Permissions.LOCATION.permissionName -> return LocationPermission(activity, fragment)
+            Permissions.LOCATION.permName -> return LocationPermission(activity, fragment)
         }
         return null
     }
